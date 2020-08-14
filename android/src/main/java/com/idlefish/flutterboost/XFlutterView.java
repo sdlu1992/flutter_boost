@@ -38,7 +38,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.renderer.FlutterRenderer;
 import io.flutter.embedding.engine.renderer.FlutterUiDisplayListener;
 import io.flutter.embedding.engine.renderer.RenderSurface;
-import io.flutter.embedding.engine.systemchannels.TextInputChannel;
+import io.flutter.embedding.engine.systemchannels.SettingsChannel;
 import io.flutter.plugin.editing.TextInputPlugin;
 import io.flutter.plugin.platform.PlatformViewsController;
 import io.flutter.view.AccessibilityBridge;
@@ -183,7 +183,7 @@ public class XFlutterView extends FrameLayout {
         break;
       case texture:
         Log.v(TAG, "Internally using a FlutterTextureView.");
-        FlutterTextureView flutterTextureView = new FlutterTextureView(getContext());
+        XFlutterTextureView flutterTextureView = new XFlutterTextureView(getContext());
         renderSurface = flutterTextureView;
         addView(flutterTextureView);
         break;
@@ -400,7 +400,7 @@ public class XFlutterView extends FrameLayout {
    */
   @Override
   public boolean checkInputConnectionProxy(View view) {
-    return flutterEngine != null
+    return flutterEngine != null&&view!=null
             ? flutterEngine.getPlatformViewsController().checkInputConnectionProxy(view)
             : super.checkInputConnectionProxy(view);
   }
@@ -676,7 +676,7 @@ public class XFlutterView extends FrameLayout {
   }
   public void release(){
     if(textInputPlugin!=null){
-//      textInputPlugin.release();
+      textInputPlugin.release(this);
     }
   }
 
@@ -747,9 +747,15 @@ public class XFlutterView extends FrameLayout {
    */
   private void sendUserSettingsToFlutter() {
     if(flutterEngine!=null&&flutterEngine.getSettingsChannel()!=null){
+    boolean isNightModeOn = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    SettingsChannel.PlatformBrightness brightness = isNightModeOn
+            ? SettingsChannel.PlatformBrightness.dark
+            : SettingsChannel.PlatformBrightness.light;
+
     flutterEngine.getSettingsChannel().startMessage()
             .setTextScaleFactor(getResources().getConfiguration().fontScale)
             .setUse24HourFormat(DateFormat.is24HourFormat(getContext()))
+            .setPlatformBrightness(brightness)
             .send();
     }
   }

@@ -9,8 +9,8 @@ import android.graphics.Rect;
 import android.os.Build;
 
 
-import android.support.annotation.Nullable;
-import android.support.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 
 import android.view.HapticFeedbackConstants;
 import android.view.SoundEffectConstants;
@@ -22,6 +22,7 @@ import java.util.List;
 
 
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
+import io.flutter.plugin.platform.PlatformPlugin;
 
 public class XPlatformPlugin {
 
@@ -86,14 +87,11 @@ public class XPlatformPlugin {
         }
 
         @Override
-        public List<Rect> getSystemGestureExclusionRects() {
-            return XPlatformPlugin.this.getSystemGestureExclusionRects();
-        }
-
-        @Override
-        public void setSystemGestureExclusionRects(@NonNull ArrayList<Rect> rects) {
-            XPlatformPlugin.this.setSystemGestureExclusionRects(rects);
-        }
+        public boolean clipboardHasStrings() {
+            CharSequence data =
+                    XPlatformPlugin.this.getClipboardData(
+                            PlatformChannel.ClipboardContentFormat.PLAIN_TEXT);
+            return data != null && data.length() > 0;        }
     };
 
     public XPlatformPlugin(PlatformChannel platformChannel) {

@@ -6,10 +6,10 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
-import android.support.annotation.NonNull;
 
 import com.idlefish.flutterboost.interfaces.*;
 
+import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterEngineProvider;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -352,7 +352,7 @@ public class FlutterBoost {
             }
 
             if (mEngine == null) {
-                mEngine = new FlutterEngine(mPlatform.getApplication().getApplicationContext(),FlutterLoader.getInstance(),new FlutterJNI(),null,false);
+                mEngine = new FlutterEngine(mPlatform.getApplication().getApplicationContext(),FlutterLoader.getInstance(),new FlutterJNI(),null,true);
             }
 
 //            registerPlugins(mEngine);

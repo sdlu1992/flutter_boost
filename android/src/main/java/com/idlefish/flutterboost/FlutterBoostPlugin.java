@@ -1,6 +1,5 @@
 package com.idlefish.flutterboost;
 
-import android.support.annotation.Nullable;
 import android.os.Handler;
 import android.util.Log;
 
@@ -9,6 +8,7 @@ import com.idlefish.flutterboost.interfaces.IContainerRecord;
 import java.io.Serializable;
 import java.util.*;
 
+import androidx.annotation.Nullable;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;

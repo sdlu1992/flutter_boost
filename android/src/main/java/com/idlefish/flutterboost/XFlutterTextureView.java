@@ -1,12 +1,12 @@
 package com.idlefish.flutterboost;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.TextureView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.Log;
 import io.flutter.embedding.engine.renderer.FlutterRenderer;
 import io.flutter.embedding.engine.renderer.RenderSurface;
@@ -145,6 +145,19 @@ public class XFlutterTextureView extends TextureView implements RenderSurface {
       isAttachedToFlutterRenderer = false;
     } else {
       Log.w(TAG, "detachFromRenderer() invoked when no FlutterRenderer was attached.");
+    }
+  }
+
+  /**
+   * Invoked by the owner of this {@code FlutterTextureView} when it should pause rendering Flutter
+   * UI to this {@code FlutterTextureView}.
+   */
+  public void pause() {
+    if (flutterRenderer != null) {
+      flutterRenderer = null;
+      isAttachedToFlutterRenderer = false;
+    } else {
+      Log.w(TAG, "pause() invoked when no FlutterRenderer was attached.");
     }
   }
 

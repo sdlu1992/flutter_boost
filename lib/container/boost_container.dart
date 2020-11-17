@@ -183,7 +183,10 @@ class BoostContainerState extends NavigatorState {
 
   @override
   Future<bool> maybePop<T extends Object>([T result]) async {
-    final Route<T> route = routerHistory.last;
+    final Route<T> route = topRoute;
+    if (topRoute == null) {
+      return false;
+    }
     final RoutePopDisposition disposition = await route.willPop();
     if (mounted) {
       switch (disposition) {

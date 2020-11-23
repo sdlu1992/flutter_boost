@@ -469,6 +469,10 @@ public class FlutterFragment extends Fragment implements FlutterActivityAndFragm
     @Nullable
     @Override
     public XPlatformPlugin providePlatformPlugin( @NonNull FlutterEngine flutterEngine) {
+        if(flutterEngine == null){
+            //增加空判断，解决NPE问题：https://work.aone.alibaba-inc.com/issue/31402155
+            return null;
+        }
         return new XPlatformPlugin(flutterEngine.getPlatformChannel());
 
     }

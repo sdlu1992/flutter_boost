@@ -118,13 +118,13 @@ public class XPlatformPlugin {
 
     private void playSystemSound(PlatformChannel.SoundType soundType) {
         if (soundType == PlatformChannel.SoundType.CLICK) {
-            View view = activity.getWindow().getDecorView();
+            View view = getActivity().getWindow().getDecorView();
             view.playSoundEffect(SoundEffectConstants.CLICK);
         }
     }
 
     private void vibrateHapticFeedback(PlatformChannel.HapticFeedbackType feedbackType) {
-        View view = activity.getWindow().getDecorView();
+        View view = getActivity().getWindow().getDecorView();
         switch (feedbackType) {
             case STANDARD:
                 view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
@@ -146,7 +146,7 @@ public class XPlatformPlugin {
     }
 
     private void setSystemChromePreferredOrientations(int androidOrientation) {
-        activity.setRequestedOrientation(androidOrientation);
+        getActivity().setRequestedOrientation(androidOrientation);
     }
 
     @SuppressWarnings("deprecation")
@@ -158,11 +158,11 @@ public class XPlatformPlugin {
         // Linter refuses to believe we're only executing this code in API 28 unless we use distinct if blocks and
         // hardcode the API 28 constant.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P && Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            activity.setTaskDescription(new ActivityManager.TaskDescription(description.label, /*icon=*/ null, description.color));
+            getActivity().setTaskDescription(new ActivityManager.TaskDescription(description.label, /*icon=*/ null, description.color));
         }
         if (Build.VERSION.SDK_INT >= 28) {
             ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(description.label, 0, description.color);
-            activity.setTaskDescription(taskDescription);
+            getActivity().setTaskDescription(taskDescription);
         }
     }
 
@@ -204,7 +204,7 @@ public class XPlatformPlugin {
      * {@code PlatformPlugin}.
      */
     public void updateSystemUiOverlays(){
-        activity.getWindow().getDecorView().setSystemUiVisibility(mEnabledOverlays);
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(mEnabledOverlays);
         if (currentTheme != null) {
             setSystemChromeSystemUIOverlayStyle(currentTheme);
         }
@@ -215,7 +215,7 @@ public class XPlatformPlugin {
     }
 
     private void setSystemChromeSystemUIOverlayStyle(PlatformChannel.SystemChromeStyle systemChromeStyle) {
-        Window window = activity.getWindow();
+        Window window = getActivity().getWindow();
         View view = window.getDecorView();
         int flags = view.getSystemUiVisibility();
         // You can change the navigation bar color (including translucent colors)
@@ -264,11 +264,11 @@ public class XPlatformPlugin {
     }
 
     private void popSystemNavigator() {
-        activity.finish();
+        getActivity().finish();
     }
 
     private CharSequence getClipboardData(PlatformChannel.ClipboardContentFormat format) {
-        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = clipboard.getPrimaryClip();
         if (clip == null)
             return null;
@@ -281,7 +281,7 @@ public class XPlatformPlugin {
     }
 
     private void setClipboardData(String text) {
-        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("text label?", text);
         clipboard.setPrimaryClip(clip);
     }
@@ -289,7 +289,7 @@ public class XPlatformPlugin {
 
     private List<Rect> getSystemGestureExclusionRects() {
         if (Build.VERSION.SDK_INT >= 29) {
-            Window window = activity.getWindow();
+            Window window = getActivity().getWindow();
             View view = window.getDecorView();
             return view.getSystemGestureExclusionRects();
         }
@@ -302,9 +302,19 @@ public class XPlatformPlugin {
             return;
         }
 
-        Window window = activity.getWindow();
+        Window window = getActivity().getWindow();
         View view = window.getDecorView();
         view.setSystemGestureExclusionRects(rects);
+    }
+
+    public Activity getActivity() {
+        if (activity != null) {
+            return activity;
+        }
+        if (FlutterBoost.instance().currentActivity() != null ) {
+            return FlutterBoost.instance().currentActivity();
+        }
+        return null;
     }
 
 }
